@@ -4,4 +4,6 @@ analyzer:
     - build/**
 linter:
   rules:
+    rules:
+     sort_pub_dependencies
     file_names: false
