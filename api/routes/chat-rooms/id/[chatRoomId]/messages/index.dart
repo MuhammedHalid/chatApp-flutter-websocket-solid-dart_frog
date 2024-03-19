@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:api/src/repositories/message_repository.dart';
 import 'package:dart_frog/dart_frog.dart';
 
 FutureOr<Response> onRequest(RequestContext context, String chatRoomId) async {
@@ -15,16 +16,20 @@ FutureOr<Response> onRequest(RequestContext context, String chatRoomId) async {
     case HttpMethod.options:
       return Response(statusCode: HttpStatus.methodNotAllowed);
   }
-  //return Response(body: 'Welcome to Dart Frog!');
+  // return Response(body: 'Welcome to Dart Frog!');
 }
 
 Future<Response> _get(RequestContext context, String chatRoomId) async {
-  // use message repository
+  // Use the message repository.
+  final messageRepository = context.read<MessageRepository>();
+
   try {
-    // Create a list of message and return them inside the response 
-  } catch (e) {
-    return Response.json(body: {'error': e.toString()},
-        statusCode: HttpStatus.internalServerError);
+    final messages = await messageRepository.fetchMessages(chatRoomId);
+    return Response.json(body: {'messages': messages});
+  } catch (err) {
+    return Response.json(
+      body: {'error': err.toString()},
+      statusCode: HttpStatus.internalServerError,
+    );
   }
-  return Response(body: 'dvf');
 }
